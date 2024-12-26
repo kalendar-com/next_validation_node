@@ -1,0 +1,42 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["validation"]
+}
+
+model formulas {
+  id                 Int             @id @default(autoincrement())
+  validation_code    String          @db.VarChar
+  expression         String          @db.VarChar
+  failed_response    String?         @db.VarChar
+  type               String?         @db.VarChar
+  created_at         Int?
+  updated_at         Int?
+  deleted_at         Int?
+  id_form_validation Int
+  form_validiation   form_validation @relation(fields: [id_form_validation], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_form_validation")
+
+  @@map("formulas")
+  @@schema("validation")
+}
+
+model form_validation {
+  id             Int        @id @default(autoincrement())
+  form           Int
+  section        String?    @db.VarChar
+  id_declaration String?    @db.VarChar
+  added_field    String?    @db.VarChar
+  counted_field  String?    @db.VarChar
+  created_at     Int?
+  updated_at     Int?
+  deleted_at     Int?
+  formulas       formulas[]
+
+  @@map("form_validation")
+  @@schema("validation")
+}
